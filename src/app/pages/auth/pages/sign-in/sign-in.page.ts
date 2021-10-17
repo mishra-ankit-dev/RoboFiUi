@@ -33,8 +33,9 @@ export class SignInPage implements OnInit {
   }
 
   onClickSignIn(): void {
-    this._authService.signIn(this.signInForm.value).subscribe();
-    this._router.navigate([this.returnUrl]);
+    this._authService
+      .signIn(this.signInForm.value)
+      .subscribe(() => this._router.navigate([this.returnUrl]));
   }
 
   value(controlName: string): AbstractControl {

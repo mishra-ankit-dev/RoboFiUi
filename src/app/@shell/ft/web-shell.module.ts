@@ -26,18 +26,21 @@ const APP_ROUTES: Routes = [
     loadChildren: async () =>
       (await import('@pages/settings/settings.module')).SettingsModule,
     canLoad: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: ROUTER_UTILS.config.user.root,
     loadChildren: async () =>
       (await import('@pages/user/user.module')).UserModule,
     canLoad: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: ROUTER_UTILS.config.workflow.root,
     loadChildren: async () =>
       (await import('@pages/workflow/workflow.module')).WorkflowModule,
     canLoad: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: '**',
