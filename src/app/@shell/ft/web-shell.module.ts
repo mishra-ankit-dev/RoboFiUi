@@ -11,15 +11,15 @@ import { NotFoundPage } from '../ui/not-found/not-found.page';
 
 const APP_ROUTES: Routes = [
   {
+    path: ROUTER_UTILS.config.base.home,
+    loadChildren: async () =>
+      (await import('@pages/home/home.module')).HomeModule,
+  },
+  {
     path: ROUTER_UTILS.config.auth.root,
     loadChildren: async () =>
       (await import('@pages/auth/auth.module')).AuthModule,
     canLoad: [NoAuthGuard],
-  },
-  {
-    path: ROUTER_UTILS.config.base.home,
-    loadChildren: async () =>
-      (await import('@pages/home/home.module')).HomeModule,
   },
   {
     path: ROUTER_UTILS.config.settings.root,

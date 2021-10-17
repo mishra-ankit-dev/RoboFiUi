@@ -48,6 +48,24 @@
         class="h-8 pl-4 hover:bg-gray-100"
         >{{ technology.key }}</a
       >
+      <hr />
+      <a
+        [routerLink]="[configPath.settings.root]"
+        class="h-8 pl-4 hover:bg-gray-100"
+        >{{ 'Settings' }}</a
+      >
+      <a
+        [routerLink]="[
+          (isLoggedIn$ | async) ? configPath.user.root : configPath.auth.root
+        ]"
+        class="h-8 pl-4 hover:bg-gray-100"
+        >{{ (isLoggedIn$ | async) ? 'User' : 'Auth' }}</a
+      >
+      <!-- <a
+        [routerLink]="[configPath.user.root]"
+        class="h-8 pl-4 hover:bg-gray-100"
+        >{{ 'User' }}</a
+      > -->
     </div>
   </div>
 </div>

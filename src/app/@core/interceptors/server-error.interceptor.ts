@@ -21,8 +21,16 @@ export class ServerErrorInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
+        error.error
+          ? alert(error.error)
+          : error.statusText
+          ? alert(error.statusText)
+          : 'Server Error';
+
         if ([401, 403].includes(error.status)) {
-          this.router.navigateByUrl(ROUTER_UTILS.config.auth.signIn);
+          const { root, signIn } = ROUTER_UTILS.config.auth;
+          this.router.navigate(['/', root, signIn]);
+          // this.router.navigateByUrl(ROUTER_UTILS.config.auth.signIn);
           return throwError(error);
         } else if (error.status === 500) {
           console.error(error);

@@ -11,6 +11,10 @@ import { SignUpPage } from './pages/sign-up/sign-up.page';
 
 const routes: Routes = [
   {
+    path: '',
+    redirectTo: ROUTER_UTILS.config.auth.signIn,
+  },
+  {
     path: ROUTER_UTILS.config.auth.signIn,
     component: SignInPage,
   },

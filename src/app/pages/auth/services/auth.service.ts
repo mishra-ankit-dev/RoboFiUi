@@ -1,65 +1,80 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { getItem, removeItem, setItem, StorageItem } from '@app/@core/utils';
+import { ENDPOINT_UTILS } from '@core/utils/endpoints';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { retry, share } from 'rxjs/operators';
+import { distinctUntilChanged, share, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  AUTH_URL = `/${ENDPOINT_UTILS.config.base.home}/${ENDPOINT_UTILS.config.auth.root}/`;
   isLoggedIn$ = new BehaviorSubject<boolean>(!!getItem(StorageItem.Auth));
 
   get isLoggedIn(): boolean {
     return this.isLoggedIn$.getValue();
   }
 
-  signIn(): void {
-    const token = Array(4)
-      .fill(0)
-      .map(() => Math.random() * 99)
-      .join('-');
-
-    setItem(StorageItem.Auth, token);
-    this.isLoggedIn$.next(true);
-  }
-
-  signOut(): void {
-    removeItem(StorageItem.Auth);
-    this.isLoggedIn$.next(false);
-  }
-
-  AUTH_URL = 'backend/authentication/';
-
   constructor(private _http: HttpClient) {}
 
-  Register(userData: IUser): Observable<IToken> {
+  signIn(signInData: IUser): Observable<IToken> {
     return this._http
-      .post<IToken>(this.AUTH_URL + 'register/', userData)
+      .post<IToken>(
+        this.AUTH_URL + `${ENDPOINT_UTILS.config.auth.signIn}/`,
+        signInData,
+      )
+      .pipe(
+        tap((token: IToken) => {
+          setItem(StorageItem.Auth, token.key);
+          this.isLoggedIn$.next(true);
+        }),
+        share(),
+      );
+  }
+
+  signUp(userData: IUser): Observable<IToken> {
+    return this._http
+      .post<IToken>(
+        this.AUTH_URL + `${ENDPOINT_UTILS.config.auth.signUp}/`,
+        userData,
+      )
       .pipe(share());
   }
 
-  EditUserDetails(userData: IUser): Observable<IToken> {
+  signOut(): Observable<boolean> {
     return this._http
-      .patch<IToken>(this.AUTH_URL + 'register/', userData)
-      .pipe(share());
+      .post<boolean>(
+        this.AUTH_URL + `${ENDPOINT_UTILS.config.auth.signOut}/`,
+        '',
+      )
+      .pipe(
+        tap(() => {
+          removeItem(StorageItem.Auth);
+          this.isLoggedIn$.next(false);
+        }),
+        share(),
+      );
   }
 
-  LogIn(loginData: IUser): Observable<IToken> {
-    return this._http
-      .post<IToken>(this.AUTH_URL + 'login/', loginData)
-      .pipe(share());
-  }
+  // Subject for All Users
+  private _allUsersSubject$: BehaviorSubject<IUser[]> = new BehaviorSubject<
+    IUser[]
+  >([]);
+  private _allUsers$: Observable<IUser[]> = <Observable<IUser[]>>(
+    this._allUsersSubject$
+      .asObservable()
+      .pipe(
+        distinctUntilChanged(
+          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
+        ),
+      )
+  );
 
-  ValidateUserInDomain(): Observable<IToken> {
-    return this._http
-      .post<IToken>(this.AUTH_URL + 'validate/', {})
-      .pipe(share(), retry(2));
+  get allUsers$(): Observable<IUser[]> {
+    return this._allUsers$;
   }
-
-  LogOut(): Observable<boolean> {
-    return this._http
-      .post<boolean>(this.AUTH_URL + 'logout/', '')
-      .pipe(share());
+  set allUsers(value: IUser[]) {
+    this._allUsersSubject$.next(value);
   }
 }

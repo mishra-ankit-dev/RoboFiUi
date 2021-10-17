@@ -91,7 +91,8 @@ body {
     }
 
     .form-control {
-      inline-size: 100%;
+      // inline-size: 100%;
+      inline-size: max(240px, 40%);
     }
 
     .highlight {
@@ -100,7 +101,7 @@ body {
     }
 
     textarea {
-      inline-size: max(240px, 70%);
+      inline-size: max(240px, 40%);
     }
 
     .form-heading {
@@ -115,7 +116,7 @@ body {
     }
 
     .form-label.required:after {
-      content: "*";
+      content: '*';
       color: red;
       font-size: 17px;
       margin-left: 5px;
@@ -146,18 +147,18 @@ body {
   }
 }
 
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 @layer base {
-  @import "01-base/font.scss";
-  @import "01-base/document.scss";
-  @import "01-base/headings.scss";
+  @import '01-base/font.scss';
+  @import '01-base/document.scss';
+  @import '01-base/headings.scss';
 }
 
 @layer components {
-  @import "02-components/link.scss";
+  @import '02-components/link.scss';
 }
 
 @layer utilities {

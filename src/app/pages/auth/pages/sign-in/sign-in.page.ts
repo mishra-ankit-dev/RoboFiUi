@@ -12,35 +12,30 @@ import { isInValid, isValid } from '../../validators/custom.validator';
   styleUrls: ['./sign-in.page.scss'],
 })
 export class SignInPage implements OnInit {
-  returnUrl!: string;
-
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-    private activatedRoute: ActivatedRoute,
-
-    private _router: Router,
-  ) {}
-
-  ngOnInit() {
-    this.returnUrl =
-      this.activatedRoute.snapshot.queryParamMap.get('returnUrl') ||
-      `/${ROUTER_UTILS.config.base.home}`;
-  }
-
-  onClickSignIn(): void {
-    this.authService.signIn();
-    this.authService.LogIn(this.signInForm.value);
-    this.router.navigate([this.returnUrl]);
-  }
-
   isValid = isValid;
   isInValid = isInValid;
   subscriptions = Subscription;
 
-  userValidationCompleted = false;
+  returnUrl!: string;
+  signInForm!: FormGroup;
 
-  signInForm: FormGroup = AuthenticationForms.LoginForm();
+  constructor(
+    private _router: Router,
+    private _authService: AuthService,
+    private _activatedRoute: ActivatedRoute,
+  ) {}
+
+  ngOnInit(): void {
+    this.signInForm = AuthenticationForms.LoginForm();
+    this.returnUrl =
+      this._activatedRoute.snapshot.queryParamMap.get('returnUrl') ||
+      `/${ROUTER_UTILS.config.base.home}`;
+  }
+
+  onClickSignIn(): void {
+    this._authService.signIn(this.signInForm.value).subscribe();
+    this._router.navigate([this.returnUrl]);
+  }
 
   value(controlName: string): AbstractControl {
     return this.signInForm.controls[controlName];

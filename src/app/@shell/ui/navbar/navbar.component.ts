@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationStart } from '@angular/router';
 import { RouteService } from '@app/@core/services/route';
 import { ROUTER_UTILS } from '@app/@core/utils/router.utils';
+import { AuthService } from '@app/pages/auth/services/auth.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -10,21 +11,24 @@ import { Observable } from 'rxjs';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
+  isLoggedIn$!: Observable<boolean>;
   configPath = ROUTER_UTILS.config;
   currentRouteURL$!: Observable<NavigationStart>;
 
-  constructor(private _routeService: RouteService) {}
+  constructor(
+    private _routeService: RouteService,
+    private _authService: AuthService,
+  ) {}
 
   ngOnInit(): void {
+    this.isLoggedIn$ = this._authService.isLoggedIn$;
     this.currentRouteURL$ = this._routeService.currentRouteURL$;
   }
 
   routeIsHomeURL(currentRouteURL: string): boolean {
-    if (currentRouteURL.startsWith('/') && currentRouteURL.endsWith('/')) {
-      // this._navbarService.placeholder = 'home';
-      return true;
-    }
-    return false;
+    return currentRouteURL.startsWith('/') && currentRouteURL.endsWith('/')
+      ? true
+      : false;
   }
 
   routeIsSettingsURL(currentRouteURL: string): boolean {

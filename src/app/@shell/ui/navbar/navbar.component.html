@@ -1,7 +1,9 @@
 <!-- <router-outlet></router-outlet> -->
 
 <div class="px-2" *ngIf="currentRouteURL$ | async as currentRouteURL">
-  <div *ngIf="routeIsHomeURL(currentRouteURL.url)"></div>
+  <div *ngIf="routeIsHomeURL(currentRouteURL.url)">
+    <!-- <app-auth-navbar *ngIf="(isLoggedIn$ | async) === false"></app-auth-navbar> -->
+  </div>
   <div *ngIf="routeIsSettingsURL(currentRouteURL.url)">
     <app-settings-navbar></app-settings-navbar>
   </div>

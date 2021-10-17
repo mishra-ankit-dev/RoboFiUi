@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ROUTER_UTILS } from '@app/@core/utils/router.utils';
+import { AuthService } from '@app/pages/auth/services/auth.service';
 import { TechnologyService } from '@core/services/route';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,6 +11,8 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SideBarComponent implements OnInit {
+  configPath = ROUTER_UTILS.config;
+  isLoggedIn$!: Observable<boolean>;
   isSidebarOpen = true;
   technologies!: {
     Python: string;
@@ -19,12 +22,16 @@ export class SideBarComponent implements OnInit {
 
   technologyPath$!: Observable<any>;
 
-  constructor(private technologyService: TechnologyService) {}
+  constructor(
+    private _technologyService: TechnologyService,
+    private _authService: AuthService,
+  ) {}
 
   ngOnInit(): void {
-    this.technologies = this.technologyService.technologies;
+    this.isLoggedIn$ = this._authService.isLoggedIn$;
+    this.technologies = this._technologyService.technologies;
 
-    this.technologyPath$ = this.technologyService.selectedTechnology$.pipe(
+    this.technologyPath$ = this._technologyService.selectedTechnology$.pipe(
       map(
         (selectedTechnology) =>
           ROUTER_UTILS.config.technology[selectedTechnology],
